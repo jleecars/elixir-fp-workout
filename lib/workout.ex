@@ -28,18 +28,19 @@ defmodule Workout do
   # see the tests for more examples
   @spec fold(b, list(a), (a, b -> b)) :: b
   def fold(accum, [], _func) do
-    []
+    accum
   end
 
   def fold(accum, [ fst | rst ], func) do
-    accum
+    fold(func.(accum, fst), rst, func)
   end
 
   # some of the following functions benefit from having an easy way to
   # append an item to a list.
   @spec append(a, list(a)) :: list(a)
   def append(x, items) do
-    []
+    items ++ [x]
+    # fold([], items, fn (a, b) ->  end)
   end
 
   # map should be defined in terms of fold!
@@ -48,22 +49,23 @@ defmodule Workout do
   # to each element (e.g. [2, 3, 4])
   @spec map(list(a), (a -> b)) :: list(b)
   def map(items, func) do
-    items
+    fold([], items, fn (a, b) -> append(func.(b), a) end)
   end
 
   # filter should also be defined in terms of fold! it's a theme!
   # no I don't know why I'm still using exclamations!
   @spec filter(list(a), (a -> boolean)) :: list(a)
   def filter(items, pred) do
-    items
+    fold([], items, fn (a, b) -> if pred.(b), do: append(b, a), else: a end)
   end
+
 
   # you can try defining `any` in terms of `filter` or `all`.
   # it should return true if `pred(item)` is true for at least one item in the
   # given `items` list, else false
   @spec any(list(a), (a -> boolean)) :: boolean
   def any(items, pred) do
-    true
+    fold([], items, fn (a, b) -> if pred.(b), do: true, else: a end)
   end
 
   # there are also mutiple ways to define `all`. you can try defining it in
@@ -83,7 +85,7 @@ defmodule Workout do
   end
 
   def max([fst | rst]) do
-    fst
+    fold(fst, rst, fn (a, b) -> if a > b, do: a, else: b end)
   end
 
   # min should return the smallest item (using the built-in < operator) in a
@@ -94,21 +96,21 @@ defmodule Workout do
   end
 
   def min([fst | rst]) do
-    fst
+    fold(fst, rst, fn (a, b) -> if a < b, do: a, else: b end)
   end
 
   # `len` should count the number of items in the given list. this should be
   # defined in terms of `fold`.
   @spec len(list(a)) :: integer
   def len(items) do
-    0
+    fold(0, items, fn (a, b) -> a + 1 end)
   end
 
   # splits one list into two. the first list contains all of the elements
   # where `pred(element)` is true, and the second list contains the rest
   @spec split_by(list(a), (a -> boolean)) :: { list(a), list(a) }
   def split_by(items, pred) do
-    { [], [] }
+    # fold({[], []}, items, fn (a, b) -> if pred.(b), do: append(b, elem(a, 0)), else: append(b, elem(a, 1)) end)
   end
 
   # this should be defined in terms of either fold or filter. don't worry about
