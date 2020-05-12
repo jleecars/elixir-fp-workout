@@ -65,7 +65,8 @@ defmodule Workout do
   # given `items` list, else false
   @spec any(list(a), (a -> boolean)) :: boolean
   def any(items, pred) do
-    fold([], items, fn (a, b) -> if pred.(b), do: true, else: a end)
+    # fold([], items, fn (a, b) -> if pred.(b), do: true, else: a end)
+    ""
   end
 
   # there are also mutiple ways to define `all`. you can try defining it in
@@ -73,7 +74,8 @@ defmodule Workout do
   # `item` in the given list `items`, else false
   @spec all(list(a), (a -> boolean)) :: boolean
   def all(items, pred) do
-    true
+    # fold([], items, fn (a, b) -> if pred.(b), do: a, else: false end)
+    ""
   end
 
 
